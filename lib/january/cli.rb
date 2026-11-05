@@ -15,6 +15,9 @@ module January
     desc "card SUBCOMMAND", "Manage cards of the active project"
     subcommand "card", CardCommands
 
+    desc "era SUBCOMMAND", "Manage eras of the active project"
+    subcommand "era", EraCommands
+
     desc "version", "Print the OpenJanuary version"
     def version
       puts January::VERSION

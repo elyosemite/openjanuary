@@ -81,4 +81,42 @@ class CliCardTest < Minitest::Test
     january("column", "remove", "Backlog", "--force")
     assert_match(/No cards yet/, january("card", "list"))
   end
+
+  def test_edit_with_flags
+    january("card", "add", "Old", "-d", "keep")
+    assert_match(/Updated card #1/, january("card", "edit", "1", "--title", "New"))
+    shown = january("card", "show", "1")
+    assert_includes shown, "#1 New"
+    assert_includes shown, "keep"
+  end
+
+  def test_edit_description_only
+    january("card", "add", "A")
+    january("card", "edit", "1", "-d", "Fresh")
+    assert_includes january("card", "show", "1"), "Fresh"
+  end
+
+  def test_edit_rejects_empty_title
+    january("card", "add", "A")
+    assert_match(/title cannot be empty/, january("card", "edit", "1", "-t", " "))
+  end
+
+  def test_edit_opens_editor
+    script = File.join(@home, "fake_editor.rb")
+    File.write(script, "File.write(ARGV[0], \"Edited title\n\nEdited body\n\")\n")
+    january("card", "add", "Original")
+    old = ENV["EDITOR"]
+    ENV["EDITOR"] = "ruby #{script}"
+    ENV.delete("VISUAL")
+    january("card", "edit", "1")
+    shown = january("card", "show", "1")
+    assert_includes shown, "#1 Edited title"
+    assert_includes shown, "Edited body"
+  ensure
+    old ? ENV["EDITOR"] = old : ENV.delete("EDITOR")
+  end
+
+  def test_edit_unknown_card
+    assert_match(/Card #9 not found/, january("card", "edit", "9", "-t", "x"))
+  end
 end

@@ -34,6 +34,13 @@ module January
       project
     end
 
+    def update_project(name)
+      project = find_project(name)
+      result = yield project
+      @store.write(project_path(project.name), project.to_h)
+      result
+    end
+
     def use_project(name)
       project = find_project(name)
       write_config("active_project" => project.name)

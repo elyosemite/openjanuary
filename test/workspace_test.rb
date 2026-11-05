@@ -66,4 +66,21 @@ class WorkspaceTest < Minitest::Test
   def test_remove_unknown_project_fails
     assert_raises(January::Error) { workspace.remove_project("nope") }
   end
+
+  def test_update_project_persists_changes
+    workspace.add_project("work")
+    workspace.update_project("work") { |project| project.add_column("Backlog") }
+    assert_equal %w[Backlog], workspace.find_project("work").columns
+  end
+
+  def test_update_project_does_not_persist_when_block_raises
+    workspace.add_project("work")
+    assert_raises(January::Error) do
+      workspace.update_project("work") do |project|
+        project.add_column("Backlog")
+        project.add_column("backlog")
+      end
+    end
+    assert_equal [], workspace.find_project("work").columns
+  end
 end

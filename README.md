@@ -5,17 +5,14 @@
 Work, university, personal life, finances, open source. Everything competes for your attention, and most tools built to tame it pull you out of the place where you spend your day. OpenJanuary keeps your boards one command away. It is written in Ruby, stores plain files on your machine, and asks for nothing else.
 
 ```
- Project: open-source                                  Era: Autumn Release
- -------------------------------------------------------------------------
-  Backlog (3)         Doing (2)           Review (1)         Done (4)
- ----------------   ----------------   ----------------   ----------------
-  #12 Triage          #08 Fix parser     #05 Add --json     #01 Init repo
-      issues              crash              flag           #02 CI setup
-  #14 Write docs      #11 Release                           #03 Add license
-  #15 Plan v2             notes                             #04 Draft README
-```
+Project: open-source    Era: Autumn Release
 
-> The board above is the target design. See [Status](#status) for what works today.
+Backlog (2)            Doing (2)              Review (1)             Done (3)
+--------------------   --------------------   --------------------   --------------------
+#12 Triage issues      #8 Fix parser crash    #5 Add --json flag     #1 Init repo
+#14 Write docs         #11 Release notes                             #2 CI setup
+                                                                     #3 Add license
+```
 
 ## Highlights
 
@@ -28,17 +25,7 @@ Work, university, personal life, finances, open source. Everything competes for 
 
 ## Status
 
-OpenJanuary is under active development. The first version is built one feature at a time.
-
-| Feature | State |
-| --- | --- |
-| Projects (`add`, `list`, `use`, `remove`) | Available |
-| Columns (`add`, `list`, `remove`, `move`) | Available |
-| Cards (`add`, `list`, `show`, `move`, `edit`, `remove`) | Available |
-| Board view | Planned |
-| Eras | Planned |
-
-Sections below marked as planned describe the intended interface and may change.
+Everything described below works today. Interactive mode and Markdown export are still on the roadmap.
 
 ## Installation
 
@@ -50,6 +37,8 @@ cd openjanuary
 bundle install
 bin/january help
 ```
+
+On Windows, use `bin\january` (a launcher is included). In PowerShell, run `.\bin\january`.
 
 To call it as `january` from anywhere, add the `bin` directory to your `PATH`.
 
@@ -68,6 +57,19 @@ january project list
 ```
 
 The asterisk marks the active project. The first project you create becomes active automatically.
+
+A full first session looks like this:
+
+```sh
+january project add work
+january column add Backlog
+january column add Doing
+january column add Done
+january era start November --ends 2026-11-30
+january card add "Write the proposal" -d "Draft and send to the team"
+january card move 1 Doing
+january board
+```
 
 ## Concepts
 
@@ -123,20 +125,26 @@ january card remove 7
 
 Without `--column`, a new card goes to the first column. When editing in your editor, the first line is the title and everything after the blank line is the description.
 
-### Eras (planned)
+### Eras
+
+An era is a time boxed period. Only one era can be active per project, and new cards join it automatically.
 
 ```sh
 january era start "November" --ends 2026-11-30
 january era current
-january era close
+january era close [--carry | --backlog]
 ```
 
-### Board (planned)
+The last column counts as done. When you close an era with unfinished cards, you choose what happens to them: `--carry` moves them into the next era you start, and `--backlog` sends them back to the first column. Without a flag, you are asked.
+
+### Board
 
 ```sh
 january board           # active project, current era
 january board --all     # every card, regardless of era
 ```
+
+With no active era, the board shows every card. Columns are laid out side by side and stacked on narrow terminals. Titles that do not fit are truncated.
 
 ## Data
 
@@ -172,8 +180,8 @@ The code is split in two layers. The domain and storage live in `lib/january/` a
 - [x] Projects
 - [x] Columns
 - [x] Cards
-- [ ] Board rendering
-- [ ] Eras
+- [x] Board rendering
+- [x] Eras
 - [ ] Interactive mode with keyboard navigation
 - [ ] Export to Markdown
 

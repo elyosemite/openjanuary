@@ -25,6 +25,8 @@ module CliHelper
     $stdin = StringIO.new(input) if input
     begin
       January::CLI.start(args)
+    rescue SystemExit
+      nil
     rescue January::Error => e
       err.puts "january: #{e.message}"
     ensure

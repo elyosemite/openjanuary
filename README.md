@@ -33,7 +33,7 @@ OpenJanuary is under active development. The first version is built one feature 
 | Feature | State |
 | --- | --- |
 | Projects (`add`, `list`, `use`, `remove`) | Available |
-| Columns | Planned |
+| Columns (`add`, `list`, `remove`, `move`) | Available |
 | Cards | Planned |
 | Board view | Planned |
 | Eras | Planned |
@@ -91,13 +91,18 @@ january project remove NAME    # delete a project (asks first, or pass --yes)
 
 Project names are lowercase and may contain letters, digits, `-` and `_`.
 
-### Columns (planned)
+### Columns
+
+Columns belong to the active project.
 
 ```sh
-january column add "Backlog"
-january column move "Done" --to 1
-january column remove "Doing"
+january column add NAME            # add a column at the end
+january column list               # list columns in order
+january column move NAME --to N   # move to position N (starting at 1)
+january column remove NAME         # remove a column
 ```
+
+Column names are case insensitive for matching, and keep the case you typed.
 
 ### Cards (planned)
 
@@ -158,7 +163,7 @@ The code is split in two layers. The domain and storage live in `lib/january/` a
 ## Roadmap
 
 - [x] Projects
-- [ ] Columns
+- [x] Columns
 - [ ] Cards
 - [ ] Board rendering
 - [ ] Eras

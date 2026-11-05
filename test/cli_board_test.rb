@@ -6,14 +6,12 @@ class CliBoardTest < Minitest::Test
 
   def test_board_shows_project_columns_and_cards
     january("project", "add", "work")
-    january("board", "column", "add", "Todo")
-    january("board", "column", "add", "Done")
     january("board", "card", "add", "Write tests")
     january("board", "card", "add", "Ship", "-c", "Done")
     ENV["COLUMNS"] = "60"
     out = january("board")
     assert_includes out, "Project: work"
-    assert_match(/Todo \(1\) +Done \(1\)/, out)
+    assert_match(/Backlog \(1\) +Doing \(0\) +Done \(1\)/, out)
     assert_match(/#1 Write tests +#2 Ship/, out)
   ensure
     ENV.delete("COLUMNS")
@@ -39,7 +37,7 @@ class CliBoardTest < Minitest::Test
   def test_move_out_of_range
     january("project", "add", "work")
     january("board", "column", "add", "A")
-    assert_match(/Position must be between 1 and 1/, january("board", "move", "A", "--to", "5"))
+    assert_match(/Position must be between 1 and 4/, january("board", "move", "A", "--to", "5"))
   end
 
   def test_board_all_flag_still_works_without_subcommand
@@ -77,7 +75,10 @@ class CliBoardTest < Minitest::Test
     january("board", "card", "add", "On main")
     january("board", "add", "studies")
     january("board", "use", "studies")
-    assert_match(/No columns yet/, january("board", "column", "list"))
+    assert_equal "1. Backlog
+2. Doing
+3. Done
+", january("board", "column", "list")
     january("board", "column", "add", "Reading")
     january("board", "era", "start", "Semester")
     january("board", "card", "add", "Chapter 1")

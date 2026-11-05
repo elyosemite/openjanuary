@@ -69,19 +69,19 @@ class WorkspaceTest < Minitest::Test
 
   def test_update_project_persists_changes
     workspace.add_project("work")
-    workspace.update_project("work") { |project| project.active_board.add_column("Backlog") }
-    assert_equal %w[Backlog], workspace.find_project("work").active_board.columns
+    workspace.update_project("work") { |project| project.active_board.add_column("Review") }
+    assert_equal %w[Backlog Doing Done Review], workspace.find_project("work").active_board.columns
   end
 
   def test_update_project_does_not_persist_when_block_raises
     workspace.add_project("work")
     assert_raises(January::Error) do
       workspace.update_project("work") do |project|
-        project.active_board.add_column("Backlog")
-        project.active_board.add_column("backlog")
+        project.active_board.add_column("Review")
+        project.active_board.add_column("review")
       end
     end
-    assert_equal [], workspace.find_project("work").active_board.columns
+    assert_equal January::Board::DEFAULT_COLUMNS, workspace.find_project("work").active_board.columns
   end
 
   def test_update_board_targets_the_active_board
@@ -89,7 +89,7 @@ class WorkspaceTest < Minitest::Test
     workspace.update_project("work") { |project| project.add_board("other") && project.use_board("other") }
     workspace.update_board { |board| board.add_column("Only-here") }
     project = workspace.find_project("work")
-    assert_equal %w[Only-here], project.find_board("other").columns
-    assert_equal [], project.find_board("main").columns
+    assert_equal January::Board::DEFAULT_COLUMNS + %w[Only-here], project.find_board("other").columns
+    assert_equal January::Board::DEFAULT_COLUMNS, project.find_board("main").columns
   end
 end

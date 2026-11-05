@@ -34,7 +34,7 @@ class ProjectTest < Minitest::Test
     project.add_board("other")
     project.active_board.add_column("A")
     project.use_board("other")
-    assert_equal [], project.active_board.columns
+    assert_equal January::Board::DEFAULT_COLUMNS, project.active_board.columns
   end
 
   def test_remove_board_switches_active_when_needed
@@ -56,7 +56,7 @@ class ProjectTest < Minitest::Test
     copy = January::Project.from_h(YAML.safe_load(YAML.dump(project.to_h)))
     assert_equal %w[main other], copy.board_names
     assert_equal "other", copy.active_board_name
-    assert_equal %w[A], copy.find_board("main").columns
+    assert_equal January::Board::DEFAULT_COLUMNS + %w[A], copy.find_board("main").columns
   end
 
   def test_legacy_project_becomes_the_main_board
@@ -73,5 +73,17 @@ class ProjectTest < Minitest::Test
 
   def test_invalid_project_name
     assert_raises(January::Error) { January::Project.new("a b") }
+  end
+
+  def test_every_new_board_starts_with_backlog_doing_and_done
+    project.add_board("other")
+    assert_equal %w[Backlog Doing Done], project.find_board("main").columns
+    assert_equal %w[Backlog Doing Done], project.find_board("other").columns
+  end
+
+  def test_default_columns_are_not_shared_between_boards
+    project.add_board("other")
+    project.find_board("main").add_column("Extra")
+    assert_equal %w[Backlog Doing Done], project.find_board("other").columns
   end
 end

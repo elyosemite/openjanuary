@@ -7,8 +7,6 @@ class CliCardTest < Minitest::Test
   def setup
     super
     january("project", "add", "work")
-    january("board", "column", "add", "Backlog")
-    january("board", "column", "add", "Doing")
   end
 
   def test_add_uses_first_column_by_default
@@ -60,8 +58,7 @@ class CliCardTest < Minitest::Test
   end
 
   def test_add_without_columns_fails
-    january("board", "column", "remove", "Backlog")
-    january("board", "column", "remove", "Doing")
+    %w[Backlog Doing Done].each { |c| january("board", "column", "remove", c) }
     assert_match(/Add a column first/, january("board", "card", "add", "A"))
   end
 

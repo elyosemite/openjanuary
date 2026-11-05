@@ -15,7 +15,7 @@ module January
 
     def initialize(name, boards: nil, active_board: nil)
       @name = Naming.validate!(name, "project")
-      @boards = boards ? boards.dup : [Board.new(DEFAULT_BOARD)]
+      @boards = boards ? boards.dup : [Board.create(DEFAULT_BOARD)]
       @active_board = active_board || @boards.first.name
     end
 
@@ -37,7 +37,7 @@ module January
     end
 
     def add_board(name)
-      board = Board.new(name)
+      board = Board.create(name)
       raise Error, "Board '#{board.name}' already exists." if board_names.include?(board.name)
 
       @boards << board

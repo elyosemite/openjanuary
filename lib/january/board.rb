@@ -1,6 +1,12 @@
 module January
   class Board
+    DEFAULT_COLUMNS = %w[Backlog Doing Done].freeze
+
     attr_reader :name, :columns, :cards, :eras
+
+    def self.create(name)
+      new(name, columns: DEFAULT_COLUMNS)
+    end
 
     def self.from_h(hash)
       new(

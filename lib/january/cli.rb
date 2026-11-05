@@ -9,9 +9,6 @@ module January
     desc "project SUBCOMMAND", "Manage projects"
     subcommand "project", ProjectCommands
 
-    desc "era SUBCOMMAND", "Manage eras of the active project"
-    subcommand "era", EraCommands
-
     desc "board SUBCOMMAND", "Manage boards, their columns and their cards"
     subcommand "board", BoardCommands
 

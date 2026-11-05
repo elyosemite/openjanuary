@@ -3,6 +3,8 @@ require "thor"
 module January
   class CLI < Thor
     class EraCommands < Thor
+      class_option :board, aliases: "-b", desc: "Board to act on (defaults to the active board)"
+
       def self.exit_on_failure?
         true
       end
@@ -12,14 +14,14 @@ module January
       def start(name)
         ends_on = Era.parse(options[:ends])
         era = update { |project| project.start_era(name, ends_on: ends_on) }
-        adopted = workspace.active_board.cards_in_era(era).size
+        adopted = workspace.active_board(options[:board]).cards_in_era(era).size
         puts "Started era '#{era.name}'."
         puts "#{adopted} carried card(s) joined it." if adopted.positive?
       end
 
       desc "current", "Show the active era"
       def current
-        project = workspace.active_board
+        project = workspace.active_board(options[:board])
         era = project.current_era
         return puts("No active era. Run 'january era start NAME'.") unless era
 
@@ -34,7 +36,7 @@ module January
       option :carry, type: :boolean, desc: "Carry unfinished cards to the next era"
       option :backlog, type: :boolean, desc: "Send unfinished cards back to the first column"
       def close
-        project = workspace.active_board
+        project = workspace.active_board(options[:board])
         era = project.current_era or raise Error, "No active era."
         total = project.cards_in_era(era).size
         unfinished = project.unfinished_cards(era).size
@@ -63,7 +65,7 @@ module January
       end
 
       def update(&block)
-        workspace.update_board(&block)
+        workspace.update_board(options[:board], &block)
       end
 
       def workspace

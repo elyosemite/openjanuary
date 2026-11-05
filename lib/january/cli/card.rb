@@ -4,6 +4,8 @@ require "tempfile"
 module January
   class CLI < Thor
     class CardCommands < Thor
+      class_option :board, aliases: "-b", desc: "Board to act on (defaults to the active board)"
+
       def self.exit_on_failure?
         true
       end
@@ -21,7 +23,7 @@ module January
       desc "list", "List the cards of the active board"
       option :column, aliases: "-c", desc: "Only cards in this column"
       def list
-        project = workspace.active_board
+        project = workspace.active_board(options[:board])
         cards = options[:column] ? project.cards_in(project_column(project, options[:column])) : project.cards
         return puts("No cards yet. Run 'january board card add TITLE'.") if cards.empty?
 
@@ -30,7 +32,7 @@ module January
 
       desc "show ID", "Show a card in full"
       def show(id)
-        card = workspace.active_board.find_card(id)
+        card = workspace.active_board(options[:board]).find_card(id)
         puts "##{card.id} #{card.title}"
         puts "Column: #{card.column}"
         puts
@@ -48,7 +50,7 @@ module January
       option :description, aliases: "-d", desc: "New description"
       def edit(id)
         title, description = options[:title], options[:description]
-        title, description = edit_in_editor(workspace.active_board.find_card(id)) if title.nil? && description.nil?
+        title, description = edit_in_editor(workspace.active_board(options[:board]).find_card(id)) if title.nil? && description.nil?
         card = update { |project| project.update_card(id, title: title, description: description) }
         puts "Updated card ##{card.id}."
       end
@@ -78,7 +80,7 @@ module January
       end
 
       def update(&block)
-        workspace.update_board(&block)
+        workspace.update_board(options[:board], &block)
       end
 
       def workspace

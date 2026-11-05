@@ -51,12 +51,15 @@ module January
       config["active_project"]
     end
 
-    def active_board
-      active_project.active_board
+    def active_board(name = nil)
+      project = active_project
+      name ? project.find_board(name) : project.active_board
     end
 
-    def update_board
-      update_project(active_project.name) { |project| yield project.active_board }
+    def update_board(name = nil)
+      update_project(active_project.name) do |project|
+        yield(name ? project.find_board(name) : project.active_board)
+      end
     end
 
     def active_project

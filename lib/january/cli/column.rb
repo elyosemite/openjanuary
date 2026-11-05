@@ -3,6 +3,8 @@ require "thor"
 module January
   class CLI < Thor
     class ColumnCommands < Thor
+      class_option :board, aliases: "-b", desc: "Board to act on (defaults to the active board)"
+
       def self.exit_on_failure?
         true
       end
@@ -15,7 +17,7 @@ module January
 
       desc "list", "List the columns of the active board"
       def list
-        columns = workspace.active_board.columns
+        columns = workspace.active_board(options[:board]).columns
         return puts("No columns yet. Run 'january board column add NAME'.") if columns.empty?
 
         columns.each_with_index { |column, index| puts "#{index + 1}. #{column}" }
@@ -34,7 +36,7 @@ module January
       private
 
       def update(&block)
-        workspace.update_board(&block)
+        workspace.update_board(options[:board], &block)
       end
 
       def workspace

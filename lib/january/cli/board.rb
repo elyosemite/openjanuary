@@ -12,6 +12,9 @@ module January
       desc "card SUBCOMMAND", "Manage cards of the active board"
       subcommand "card", CardCommands
 
+      desc "era SUBCOMMAND", "Manage eras of the active board"
+      subcommand "era", EraCommands
+
       def self.exit_on_failure?
         true
       end
@@ -61,9 +64,10 @@ module January
 
       desc "move COLUMN --to POSITION", "Move a column of the active board to a 1-based position"
       option :to, type: :numeric, required: true, desc: "Target position, starting at 1"
+      option :board, aliases: "-b", desc: "Board to act on (defaults to the active board)"
       def move(name)
         position = options[:to].to_i
-        column = workspace.update_board { |board| board.move_column(name, position) }
+        column = workspace.update_board(options[:board]) { |board| board.move_column(name, position) }
         puts "Moved column '#{column}' to position #{position}."
       end
 

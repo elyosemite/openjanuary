@@ -46,7 +46,7 @@ class CliBoardTest < Minitest::Test
     january("project", "add", "work")
     january("board", "column", "add", "Todo")
     january("board", "card", "add", "Old")
-    january("era", "start", "A")
+    january("board", "era", "start", "A")
     refute_includes january("board"), "#1 Old"
     assert_includes january("board", "--all"), "#1 Old"
   end
@@ -79,14 +79,14 @@ class CliBoardTest < Minitest::Test
     january("board", "use", "studies")
     assert_match(/No columns yet/, january("board", "column", "list"))
     january("board", "column", "add", "Reading")
-    january("era", "start", "Semester")
+    january("board", "era", "start", "Semester")
     january("board", "card", "add", "Chapter 1")
     assert_includes january("board"), "Board: studies"
     assert_includes january("board"), "#1 Chapter 1"
     refute_includes january("board"), "On main"
     january("board", "use", "main")
     assert_includes january("board"), "#1 On main"
-    assert_match(/No active era/, january("era", "current"))
+    assert_match(/No active era/, january("board", "era", "current"))
   end
 
   def test_each_project_remembers_its_own_active_board

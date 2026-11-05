@@ -7,6 +7,7 @@ module January
 end
 
 require_relative "january/store"
+require_relative "january/card"
 require_relative "january/project"
 require_relative "january/workspace"
 require_relative "january/cli/project"

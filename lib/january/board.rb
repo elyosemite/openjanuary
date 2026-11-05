@@ -98,7 +98,7 @@ module January
 
     def start_era(name, ends_on: nil, today: Date.today)
       if current_era
-        raise Error, "Era '#{current_era.name}' is still active. Close it with 'january era close'."
+        raise Error, "Era '#{current_era.name}' is still active. Close it with 'january board era close'."
       end
 
       era = Era.new(id: @next_era_id, name: name, starts_on: today, ends_on: ends_on)

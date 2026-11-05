@@ -23,7 +23,7 @@ module January
       def current
         project = workspace.active_board(options[:board])
         era = project.current_era
-        return puts("No active era. Run 'january era start NAME'.") unless era
+        return puts("No active era. Run 'january board era start NAME'.") unless era
 
         cards = project.cards_in_era(era)
         puts "Era: #{era.name}"

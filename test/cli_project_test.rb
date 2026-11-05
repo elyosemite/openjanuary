@@ -43,4 +43,8 @@ class CliProjectTest < Minitest::Test
   def test_unknown_project_reports_error
     assert_match(/january: Project 'zzz' not found/, january("project", "use", "zzz"))
   end
+
+  def test_version_flag
+    assert_equal "#{January::VERSION}\n", january("--version")
+  end
 end

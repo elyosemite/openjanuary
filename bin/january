@@ -7,4 +7,10 @@ begin
 rescue January::Error => e
   warn "january: #{e.message}"
   exit 1
+rescue SystemCallError => e
+  warn "january: could not access your data (#{e.message})"
+  exit 1
+rescue Interrupt
+  warn
+  exit 130
 end

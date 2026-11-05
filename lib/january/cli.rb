@@ -18,6 +18,8 @@ module January
     desc "era SUBCOMMAND", "Manage eras of the active project"
     subcommand "era", EraCommands
 
+    map %w[-v --version] => :version
+
     desc "version", "Print the OpenJanuary version"
     def version
       puts January::VERSION

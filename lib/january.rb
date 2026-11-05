@@ -9,4 +9,5 @@ end
 require_relative "january/store"
 require_relative "january/project"
 require_relative "january/workspace"
+require_relative "january/cli/project"
 require_relative "january/cli"

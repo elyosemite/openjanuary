@@ -6,6 +6,9 @@ module January
       true
     end
 
+    desc "project SUBCOMMAND", "Manage projects"
+    subcommand "project", ProjectCommands
+
     desc "version", "Print the OpenJanuary version"
     def version
       puts January::VERSION

@@ -22,8 +22,12 @@ module January
       end
 
       desc "remove NAME", "Remove a column from the active project"
+      option :move_to, desc: "Move its cards to this column before removing"
+      option :force, type: :boolean, desc: "Delete its cards along with the column"
       def remove(name)
-        column = update { |project| project.remove_column(name) }
+        column = update do |project|
+          project.remove_column(name, force: options[:force], move_to: options[:move_to])
+        end
         puts "Removed column '#{column}'."
       end
 

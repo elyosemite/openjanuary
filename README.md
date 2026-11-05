@@ -1,39 +1,44 @@
 # OpenJanuary
 
-**A calm, keyboard-first project manager that lives in your terminal.**
+**A calm project manager that lives where you already work: your terminal.**
 
-Work, university, personal life, finances, open source. Everything competes for your attention, and most tools built to tame it pull you out of the place where you already spend your day. OpenJanuary keeps your boards one command away, written in Ruby, with nothing between you and your cards.
+Work, university, personal life, finances, open source. Everything competes for your attention, and most tools built to tame it pull you out of the place where you spend your day. OpenJanuary keeps your boards one command away. It is written in Ruby, stores plain files on your machine, and asks for nothing else.
 
 ```
  Project: open-source                                  Era: Autumn Release
- ------------------------------------------------------------------------
-  Backlog (3)          Doing (2)            Review (1)         Done (4)
- ----------------    ----------------    ----------------    ----------------
-  #12 Triage          #08 Fix parser      #05 Add --json     #01 Init repo
-      issues              crash               flag           #02 CI setup
-  #14 Write docs      #11 Release         
-  #15 Plan v2             notes                              
+ -------------------------------------------------------------------------
+  Backlog (3)         Doing (2)           Review (1)         Done (4)
+ ----------------   ----------------   ----------------   ----------------
+  #12 Triage          #08 Fix parser     #05 Add --json     #01 Init repo
+      issues              crash              flag           #02 CI setup
+  #14 Write docs      #11 Release                           #03 Add license
+  #15 Plan v2             notes                             #04 Draft README
 ```
+
+> The board above is the target design. See [Status](#status) for what works today.
+
+## Highlights
+
+- **Terminal native.** No browser, no account, no sync dialog.
+- **Deliberately simple.** A card has a title and a description. Nothing more.
+- **Separate worlds.** Projects keep open source cards away from finance cards.
+- **Your columns.** Add, remove and reorder them to fit how you work.
+- **Time boxed.** Eras give you a sprint-like rhythm without the ceremony.
+- **Plain files.** Everything is YAML on disk, easy to read, back up and version.
 
 ## Status
 
-OpenJanuary is in its early days. This README describes the intended design and the commands listed below are the target interface. Expect details to change while the first version takes shape.
+OpenJanuary is under active development. The first version is built one feature at a time.
 
-## Why
-
-- **Terminal native.** No browser tab, no account, no sync dialog.
-- **Simple on purpose.** A card has a title and a description. That is all.
-- **Separated worlds.** Projects keep your open source cards away from your finance cards.
-- **Time boxed.** Eras give you a sprint-like rhythm without the ceremony.
-
-## Concepts
-
-| Concept | What it is |
+| Feature | State |
 | --- | --- |
-| **Project** | An isolated board. Use one per area of life, such as `work`, `college`, `finances` or `open-source`. |
-| **Column** | A lane of the board, such as Backlog, Doing or Done. You can add, remove and reorder columns freely. |
-| **Card** | A unit of work with a title and a description. Nothing more. |
-| **Era** | A time boxed period, similar to a sprint in Jira. Cards are planned into an era and reviewed when it ends. |
+| Projects (`add`, `list`, `use`, `remove`) | Available |
+| Columns | Planned |
+| Cards | Planned |
+| Board view | Planned |
+| Eras | Planned |
+
+Sections below marked as planned describe the intended interface and may change.
 
 ## Installation
 
@@ -46,28 +51,55 @@ bundle install
 bin/january help
 ```
 
-## Usage
+To call it as `january` from anywhere, add the `bin` directory to your `PATH`.
+
+## Quick start
+
+```sh
+january project add finances
+january project add open-source
+january project use open-source
+january project list
+```
+
+```
+  finances
+* open-source
+```
+
+The asterisk marks the active project. The first project you create becomes active automatically.
+
+## Concepts
+
+| Concept | What it is |
+| --- | --- |
+| **Project** | An isolated board. Use one per area of life, such as `work`, `college`, `finances` or `open-source`. |
+| **Column** | A lane of the board, such as Backlog, Doing or Done. You can add, remove and reorder them. |
+| **Card** | A unit of work with a title and a description. |
+| **Era** | A time boxed period, similar to a sprint in Jira. Cards are planned into an era and reviewed when it ends. |
+
+## Commands
 
 ### Projects
 
 ```sh
-january project add finances
-january project list
-january project use finances
-january project remove finances
+january project add NAME       # create a project
+january project list           # list projects, active one marked with *
+january project use NAME       # switch the active project
+january project remove NAME    # delete a project (asks first, or pass --yes)
 ```
 
-### Columns
+Project names are lowercase and may contain letters, digits, `-` and `_`.
+
+### Columns (planned)
 
 ```sh
 january column add "Backlog"
-january column add "Doing"
-january column add "Done"
 january column move "Done" --to 1
 january column remove "Doing"
 ```
 
-### Cards
+### Cards (planned)
 
 ```sh
 january card add "Pay the university fee" --column Backlog \
@@ -79,7 +111,7 @@ january card edit 7
 january card remove 7
 ```
 
-### Eras
+### Eras (planned)
 
 ```sh
 january era start "November" --ends 2026-11-30
@@ -87,36 +119,55 @@ january era current
 january era close
 ```
 
-### Board view
+### Board (planned)
 
 ```sh
-january board
+january board           # active project, current era
+january board --all     # every card, regardless of era
 ```
-
-Prints the active project as columns, filtered to the current era.
 
 ## Data
 
-Everything is stored locally, one file per project, so you can inspect it, back it up or keep it in version control.
+Everything is stored locally, one file per project.
 
 ```
 ~/.january/
-  config.yml
+  config.yml            # active project
   projects/
     finances.yml
     open-source.yml
 ```
 
+Set `JANUARY_HOME` to keep your data somewhere else, for example inside a synced folder or a git repository:
+
+```sh
+export JANUARY_HOME=~/notes/january
+```
+
+Writes are atomic, so a crash in the middle of saving never leaves a half written file.
+
+## Development
+
+```sh
+bundle install
+bundle exec rake test
+```
+
+The code is split in two layers. The domain and storage live in `lib/january/` and know nothing about the command line. The commands live in `lib/january/cli/` and only parse arguments and print results. This keeps room for an interactive mode later without rewriting the rules.
+
 ## Roadmap
 
-- [ ] Projects, columns, cards and eras
-- [ ] Board rendering in the terminal
+- [x] Projects
+- [ ] Columns
+- [ ] Cards
+- [ ] Board rendering
+- [ ] Eras
 - [ ] Interactive mode with keyboard navigation
 - [ ] Export to Markdown
 
 ## Contributing
 
-Issues and pull requests are welcome. Keep changes small and focused, and prefer simplicity over features.
+Issues and pull requests are welcome. Keep changes small and focused, add tests for new behavior, and prefer simplicity over features.
 
 ## License
 

@@ -1,7 +1,7 @@
 module January
   class Card
     attr_reader :id
-    attr_accessor :column
+    attr_accessor :column, :era_id
     attr_reader :title, :description
 
     def self.from_h(hash)
@@ -9,12 +9,14 @@ module January
         id: hash.fetch("id"),
         title: hash.fetch("title"),
         description: hash.fetch("description", ""),
-        column: hash.fetch("column")
+        column: hash.fetch("column"),
+        era_id: hash["era_id"]
       )
     end
 
-    def initialize(id:, title:, column:, description: "")
+    def initialize(id:, title:, column:, description: "", era_id: nil)
       @id = id
+      @era_id = era_id
       @column = column
       self.title = title
       self.description = description
@@ -32,7 +34,7 @@ module January
     end
 
     def to_h
-      { "id" => id, "title" => title, "description" => description, "column" => column }
+      { "id" => id, "title" => title, "description" => description, "column" => column, "era_id" => era_id }
     end
   end
 end

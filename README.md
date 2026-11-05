@@ -5,7 +5,7 @@
 Work, university, personal life, finances, open source. Everything competes for your attention, and most tools built to tame it pull you out of the place where you spend your day. OpenJanuary keeps your boards one command away. It is written in Ruby, stores plain files on your machine, and asks for nothing else.
 
 ```
-Project: open-source    Era: Autumn Release
+Project: open-source    Board: main    Era: Autumn Release
 
 Backlog (2)            Doing (2)              Review (1)             Done (3)
 --------------------   --------------------   --------------------   --------------------
@@ -19,6 +19,7 @@ Backlog (2)            Doing (2)              Review (1)             Done (3)
 - **Terminal native.** No browser, no account, no sync dialog.
 - **Deliberately simple.** A card has a title and a description. Nothing more.
 - **Separate worlds.** Projects keep open source cards away from finance cards.
+- **Boards inside projects.** Each project can hold several boards, one per set of activities.
 - **Your columns.** Add, remove and reorder them to fit how you work.
 - **Time boxed.** Eras give you a sprint-like rhythm without the ceremony.
 - **Plain files.** Everything is YAML on disk, easy to read, back up and version.
@@ -62,6 +63,7 @@ A full first session looks like this:
 
 ```sh
 january project add work
+january board add studies    # optional: a second board
 january column add Backlog
 january column add Doing
 january column add Done
@@ -75,7 +77,8 @@ january board
 
 | Concept | What it is |
 | --- | --- |
-| **Project** | An isolated board. Use one per area of life, such as `work`, `college`, `finances` or `open-source`. |
+| **Project** | An isolated area that holds one or more boards. Use one per area of life, such as `work`, `college`, `finances` or `open-source`. |
+| **Board** | A set of activities inside a project, with its own columns, cards and eras. Every board belongs to exactly one project, and a new project starts with a board called `main`. |
 | **Column** | A lane of the board, such as Backlog, Doing or Done. You can add, remove and reorder them. |
 | **Card** | A unit of work with a title and a description. |
 | **Era** | A time boxed period, similar to a sprint in Jira. Cards are planned into an era and reviewed when it ends. |
@@ -136,11 +139,24 @@ january era close [--carry | --backlog]
 
 The last column counts as done. When you close an era with unfinished cards, you choose what happens to them: `--carry` moves them into the next era you start, and `--backlog` sends them back to the first column. Without a flag, you are asked.
 
-### Board
+### Boards
+
+A project can have several boards. Columns, cards and eras always belong to the active board of the active project, and each project remembers which board was active.
 
 ```sh
-january board           # active project, current era
-january board --all     # every card, regardless of era
+january board add NAME          # create a board in the active project
+january board list              # list boards, active one marked with *
+january board use NAME          # switch the active board
+january board remove NAME       # delete a board (asks first, or pass --yes)
+```
+
+A project always keeps at least one board. Card ids and eras are per board.
+
+### Board view
+
+```sh
+january board                    # active board, current era
+january board --all              # every card, regardless of era
 january board move NAME --to N   # move a column to position N (starting at 1)
 ```
 
@@ -154,9 +170,11 @@ Everything is stored locally, one file per project.
 ~/.january/
   config.yml            # active project
   projects/
-    finances.yml
+    finances.yml        # one file per project, with all of its boards
     open-source.yml
 ```
+
+Project files written by earlier versions are upgraded on read: their columns, cards and eras become the `main` board.
 
 Set `JANUARY_HOME` to keep your data somewhere else, for example inside a synced folder or a git repository:
 

@@ -6,9 +6,11 @@ module January
   class Error < StandardError; end
 end
 
+require_relative "january/naming"
 require_relative "january/store"
 require_relative "january/era"
 require_relative "january/card"
+require_relative "january/board"
 require_relative "january/project"
 require_relative "january/workspace"
 require_relative "january/board_renderer"

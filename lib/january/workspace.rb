@@ -51,6 +51,14 @@ module January
       config["active_project"]
     end
 
+    def active_board
+      active_project.active_board
+    end
+
+    def update_board
+      update_project(active_project.name) { |project| yield project.active_board }
+    end
+
     def active_project
       name = active_name
       raise Error, "No active project. Run 'january project use NAME'." unless name

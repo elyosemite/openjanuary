@@ -21,7 +21,7 @@ module January
       desc "list", "List the cards of the active project"
       option :column, aliases: "-c", desc: "Only cards in this column"
       def list
-        project = workspace.active_project
+        project = workspace.active_board
         cards = options[:column] ? project.cards_in(project_column(project, options[:column])) : project.cards
         return puts("No cards yet. Run 'january card add TITLE'.") if cards.empty?
 
@@ -30,7 +30,7 @@ module January
 
       desc "show ID", "Show a card in full"
       def show(id)
-        card = workspace.active_project.find_card(id)
+        card = workspace.active_board.find_card(id)
         puts "##{card.id} #{card.title}"
         puts "Column: #{card.column}"
         puts
@@ -43,42 +43,42 @@ module January
         puts "Moved card ##{card.id} to '#{card.column}'."
       end
 
-desc "edit ID", "Edit a card (opens $EDITOR unless --title or --description is given)"
-option :title, aliases: "-t", desc: "New title"
-option :description, aliases: "-d", desc: "New description"
-def edit(id)
-  title, description = options[:title], options[:description]
-  title, description = edit_in_editor(workspace.active_project.find_card(id)) if title.nil? && description.nil?
-  card = update { |project| project.update_card(id, title: title, description: description) }
-  puts "Updated card ##{card.id}."
-end
+      desc "edit ID", "Edit a card (opens $EDITOR unless --title or --description is given)"
+      option :title, aliases: "-t", desc: "New title"
+      option :description, aliases: "-d", desc: "New description"
+      def edit(id)
+        title, description = options[:title], options[:description]
+        title, description = edit_in_editor(workspace.active_board.find_card(id)) if title.nil? && description.nil?
+        card = update { |project| project.update_card(id, title: title, description: description) }
+        puts "Updated card ##{card.id}."
+      end
 
-desc "remove ID", "Delete a card"
+      desc "remove ID", "Delete a card"
       def remove(id)
         card = update { |project| project.remove_card(id) }
         puts "Removed card ##{card.id}."
       end
 
-private
+      private
 
-def edit_in_editor(card)
-  Tempfile.create(["january-card-", ".md"]) do |file|
-    file.write("#{card.title}\n\n#{card.description}\n")
-    file.close
-    editor = ENV["VISUAL"] || ENV["EDITOR"] || (Gem.win_platform? ? "notepad" : "vi")
-    raise Error, "Editor #{editor} failed." unless system("#{editor} \"#{file.path}\"")
+      def edit_in_editor(card)
+        Tempfile.create(["january-card-", ".md"]) do |file|
+          file.write("#{card.title}\n\n#{card.description}\n")
+          file.close
+          editor = ENV["VISUAL"] || ENV["EDITOR"] || (Gem.win_platform? ? "notepad" : "vi")
+          raise Error, "Editor #{editor} failed." unless system("#{editor} \"#{file.path}\"")
 
-    title, *rest = File.read(file.path).lines
-    [title.to_s, rest.join]
-  end
-end
+          title, *rest = File.read(file.path).lines
+          [title.to_s, rest.join]
+        end
+      end
 
       def project_column(project, name)
         project.columns.find { |c| c.casecmp?(name.strip) } || raise(Error, "Column '#{name.strip}' not found.")
       end
 
       def update(&block)
-        workspace.update_project(workspace.active_project.name, &block)
+        workspace.update_board(&block)
       end
 
       def workspace

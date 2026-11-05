@@ -5,70 +5,73 @@ class ProjectTest < Minitest::Test
     @project ||= January::Project.new("work")
   end
 
-  def test_starts_without_columns
-    assert_equal [], project.columns
+  def test_new_project_has_a_default_board
+    assert_equal %w[main], project.board_names
+    assert_equal "main", project.active_board.name
   end
 
-  def test_add_column_keeps_order_and_case
-    project.add_column("Backlog")
-    project.add_column("  Doing ")
-    assert_equal %w[Backlog Doing], project.columns
+  def test_add_board_and_normalize_name
+    project.add_board(" Side-Quests ")
+    assert_equal %w[main side-quests], project.board_names
   end
 
-  def test_duplicate_column_is_rejected_ignoring_case
-    project.add_column("Backlog")
-    error = assert_raises(January::Error) { project.add_column("backlog") }
-    assert_match(/already exists/, error.message)
+  def test_duplicate_board_is_rejected
+    assert_raises(January::Error) { project.add_board("MAIN") }
   end
 
-  def test_empty_column_is_rejected
-    assert_raises(January::Error) { project.add_column("   ") }
+  def test_invalid_board_name_is_rejected
+    assert_raises(January::Error) { project.add_board("a b") }
   end
 
-  def test_remove_column_ignores_case
-    project.add_column("Backlog")
-    project.add_column("Done")
-    assert_equal "Backlog", project.remove_column("BACKLOG")
-    assert_equal %w[Done], project.columns
+  def test_use_board_switches_active
+    project.add_board("other")
+    project.use_board("other")
+    assert_equal "other", project.active_board.name
+    assert_raises(January::Error) { project.use_board("nope") }
   end
 
-  def test_remove_unknown_column_fails
-    assert_raises(January::Error) { project.remove_column("Nope") }
+  def test_boards_are_independent
+    project.add_board("other")
+    project.active_board.add_column("A")
+    project.use_board("other")
+    assert_equal [], project.active_board.columns
   end
 
-  def test_move_column_to_front_middle_and_end
-    %w[A B C D].each { |c| project.add_column(c) }
-    project.move_column("D", 1)
-    assert_equal %w[D A B C], project.columns
-    project.move_column("A", 3)
-    assert_equal %w[D B A C], project.columns
-    project.move_column("D", 4)
-    assert_equal %w[B A C D], project.columns
+  def test_remove_board_switches_active_when_needed
+    project.add_board("other")
+    project.use_board("other")
+    project.remove_board("other")
+    assert_equal "main", project.active_board_name
   end
 
-  def test_move_rejects_out_of_range_position
-    project.add_column("A")
-    assert_raises(January::Error) { project.move_column("A", 0) }
-    assert_raises(January::Error) { project.move_column("A", 2) }
+  def test_last_board_cannot_be_removed
+    error = assert_raises(January::Error) { project.remove_board("main") }
+    assert_match(/at least one board/, error.message)
   end
 
-  def test_move_unknown_column_fails
-    assert_raises(January::Error) { project.move_column("Nope", 1) }
+  def test_roundtrip
+    project.add_board("other")
+    project.active_board.add_column("A")
+    project.use_board("other")
+    copy = January::Project.from_h(YAML.safe_load(YAML.dump(project.to_h)))
+    assert_equal %w[main other], copy.board_names
+    assert_equal "other", copy.active_board_name
+    assert_equal %w[A], copy.find_board("main").columns
   end
 
-  def test_roundtrip_through_hash
-    project.add_column("Backlog")
-    copy = January::Project.from_h(project.to_h)
-    assert_equal %w[Backlog], copy.columns
+  def test_legacy_project_becomes_the_main_board
+    legacy = {
+      "name" => "old", "columns" => %w[Todo Done],
+      "cards" => [{ "id" => 1, "title" => "X", "description" => "", "column" => "Todo" }],
+      "next_card_id" => 2
+    }
+    project = January::Project.from_h(legacy)
+    assert_equal %w[main], project.board_names
+    assert_equal %w[Todo Done], project.active_board.columns
+    assert_equal ["X"], project.active_board.cards.map(&:title)
   end
 
-  def test_loads_legacy_hash_without_columns
-    assert_equal [], January::Project.from_h("name" => "old").columns
-  end
-
-  def test_columns_are_not_shared_with_caller_array
-    source = %w[A]
-    January::Project.new("x", columns: source).add_column("B")
-    assert_equal %w[A], source
+  def test_invalid_project_name
+    assert_raises(January::Error) { January::Project.new("a b") }
   end
 end

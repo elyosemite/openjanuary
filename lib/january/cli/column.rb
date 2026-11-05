@@ -15,7 +15,7 @@ module January
 
       desc "list", "List the columns of the active project"
       def list
-        columns = workspace.active_project.columns
+        columns = workspace.active_board.columns
         return puts("No columns yet. Run 'january column add NAME'.") if columns.empty?
 
         columns.each_with_index { |column, index| puts "#{index + 1}. #{column}" }
@@ -34,7 +34,7 @@ module January
       private
 
       def update(&block)
-        workspace.update_project(workspace.active_project.name, &block)
+        workspace.update_board(&block)
       end
 
       def workspace

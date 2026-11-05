@@ -12,6 +12,9 @@ module January
     desc "column SUBCOMMAND", "Manage columns of the active project"
     subcommand "column", ColumnCommands
 
+    desc "card SUBCOMMAND", "Manage cards of the active project"
+    subcommand "card", CardCommands
+
     desc "version", "Print the OpenJanuary version"
     def version
       puts January::VERSION

@@ -34,7 +34,7 @@ OpenJanuary is under active development. The first version is built one feature 
 | --- | --- |
 | Projects (`add`, `list`, `use`, `remove`) | Available |
 | Columns (`add`, `list`, `remove`, `move`) | Available |
-| Cards | Planned |
+| Cards (`add`, `list`, `show`, `move`, `edit`, `remove`) | Available |
 | Board view | Planned |
 | Eras | Planned |
 
@@ -104,17 +104,24 @@ january column remove NAME         # remove a column
 
 Column names are case insensitive for matching, and keep the case you typed.
 
-### Cards (planned)
+Removing a column that still has cards is blocked. Pass `--move-to COLUMN` to relocate the cards or `--force` to delete them with the column.
+
+### Cards
+
+Cards belong to the active project and always sit in a column. Ids are sequential per project and are never reused.
 
 ```sh
 january card add "Pay the university fee" --column Backlog \
   --description "Due on the 10th, bank transfer"
-january card list
+january card list [--column NAME]
 january card show 7
 january card move 7 Doing
-january card edit 7
+january card edit 7                      # opens $EDITOR
+january card edit 7 --title "New title"  # or edit with flags
 january card remove 7
 ```
+
+Without `--column`, a new card goes to the first column. When editing in your editor, the first line is the title and everything after the blank line is the description.
 
 ### Eras (planned)
 
@@ -164,7 +171,7 @@ The code is split in two layers. The domain and storage live in `lib/january/` a
 
 - [x] Projects
 - [x] Columns
-- [ ] Cards
+- [x] Cards
 - [ ] Board rendering
 - [ ] Eras
 - [ ] Interactive mode with keyboard navigation

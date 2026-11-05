@@ -56,4 +56,78 @@ class CliBoardTest < Minitest::Test
     january("column", "add", "A")
     refute_match(/column move/, january("column", "help"))
   end
+
+  def test_new_project_starts_with_main_board
+    january("project", "add", "work")
+    assert_equal "* main\n", january("board", "list")
+    assert_includes january("board"), "Board: main"
+  end
+
+  def test_add_list_and_use
+    january("project", "add", "work")
+    assert_match(/Created board 'studies'/, january("board", "add", "studies"))
+    assert_equal "* main\n  studies\n", january("board", "list")
+    assert_match(/Now using board 'studies'/, january("board", "use", "studies"))
+    assert_equal "  main\n* studies\n", january("board", "list")
+  end
+
+  def test_boards_keep_separate_columns_cards_and_eras
+    january("project", "add", "work")
+    january("column", "add", "Todo")
+    january("card", "add", "On main")
+    january("board", "add", "studies")
+    january("board", "use", "studies")
+    assert_match(/No columns yet/, january("column", "list"))
+    january("column", "add", "Reading")
+    january("era", "start", "Semester")
+    january("card", "add", "Chapter 1")
+    assert_includes january("board"), "Board: studies"
+    assert_includes january("board"), "#1 Chapter 1"
+    refute_includes january("board"), "On main"
+    january("board", "use", "main")
+    assert_includes january("board"), "#1 On main"
+    assert_match(/No active era/, january("era", "current"))
+  end
+
+  def test_each_project_remembers_its_own_active_board
+    january("project", "add", "a")
+    january("board", "add", "x")
+    january("board", "use", "x")
+    january("project", "add", "b")
+    january("project", "use", "b")
+    assert_equal "* main\n", january("board", "list")
+    january("project", "use", "a")
+    assert_equal "  main\n* x\n", january("board", "list")
+  end
+
+  def test_use_unknown_board
+    january("project", "add", "work")
+    assert_match(/Board 'nope' not found/, january("board", "use", "nope"))
+  end
+
+  def test_duplicate_board
+    january("project", "add", "work")
+    assert_match(/already exists/, january("board", "add", "main"))
+  end
+
+  def test_remove_board_with_confirmation
+    january("project", "add", "work")
+    january("board", "add", "studies")
+    assert_match(/Aborted/, january("board", "remove", "studies", input: "n\n"))
+    assert_match(/Removed board 'studies'/, january("board", "remove", "studies", "--yes"))
+    assert_equal "* main\n", january("board", "list")
+  end
+
+  def test_cannot_remove_the_last_board
+    january("project", "add", "work")
+    assert_match(/at least one board/, january("board", "remove", "main", "--yes"))
+  end
+
+  def test_removing_active_board_falls_back
+    january("project", "add", "work")
+    january("board", "add", "studies")
+    january("board", "use", "studies")
+    january("board", "remove", "studies", "-y")
+    assert_equal "* main\n", january("board", "list")
+  end
 end

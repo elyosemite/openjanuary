@@ -67,7 +67,7 @@ january board add studies    # optional: a second board
 january board column add Backlog
 january board column add Doing
 january board column add Done
-january era start November --ends 2026-11-30
+january board era start November --ends 2026-11-30
 january board card add "Write the proposal" -d "Draft and send to the team"
 january board card move 1 Doing
 january board
@@ -129,12 +129,12 @@ Without `--column`, a new card goes to the first column. When editing in your ed
 
 ### Eras
 
-An era is a time boxed period. Only one era can be active per project, and new cards join it automatically.
+An era is a time boxed period of a board. Only one era can be active per board, and new cards join it automatically.
 
 ```sh
-january era start "November" --ends 2026-11-30
-january era current
-january era close [--carry | --backlog]
+january board era start "November" --ends 2026-11-30
+january board era current
+january board era close [--carry | --backlog]
 ```
 
 The last column counts as done. When you close an era with unfinished cards, you choose what happens to them: `--carry` moves them into the next era you start, and `--backlog` sends them back to the first column. Without a flag, you are asked.
@@ -151,6 +151,17 @@ january board remove NAME       # delete a board (asks first, or pass --yes)
 ```
 
 A project always keeps at least one board. Card ids and eras are per board.
+
+#### Acting on a specific board
+
+Columns, cards and eras live inside a board. Their commands act on the active board by default, and `--board NAME` (or `-b NAME`) targets another board without switching:
+
+```sh
+january board column add Reading --board studies
+january board card add "Chapter 1" -b studies
+january board card list -b studies
+january board era start Semester -b studies
+```
 
 ### Board view
 

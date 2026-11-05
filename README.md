@@ -64,9 +64,6 @@ A full first session looks like this:
 ```sh
 january project add work
 january board add studies    # optional: a second board
-january board column add Backlog
-january board column add Doing
-january board column add Done
 january board era start November --ends 2026-11-30
 january board card add "Write the proposal" -d "Draft and send to the team"
 january board card move 1 Doing
@@ -78,7 +75,7 @@ january board
 | Concept | What it is |
 | --- | --- |
 | **Project** | An isolated area that holds one or more boards. Use one per area of life, such as `work`, `college`, `finances` or `open-source`. |
-| **Board** | A set of activities inside a project, with its own columns, cards and eras. Every board belongs to exactly one project, and a new project starts with a board called `main`. |
+| **Board** | A set of activities inside a project, with its own columns, cards and eras. Every board belongs to exactly one project, and a new project starts with a board called `main`. Every new board comes with the columns Backlog, Doing and Done. |
 | **Column** | A lane of the board, such as Backlog, Doing or Done. You can add, remove and reorder them. |
 | **Card** | A unit of work with a title and a description. |
 | **Era** | A time boxed period, similar to a sprint in Jira. Cards are planned into an era and reviewed when it ends. |
@@ -98,7 +95,7 @@ Project names are lowercase and may contain letters, digits, `-` and `_`.
 
 ### Columns
 
-Columns belong to a board, so these commands act on the active board.
+Columns belong to a board, so these commands act on the active board. Every new board starts with Backlog, Doing and Done, which you can change freely.
 
 ```sh
 january board column add NAME            # add a column at the end
@@ -125,7 +122,7 @@ january board card edit 7 --title "New title"  # or edit with flags
 january board card remove 7
 ```
 
-Without `--column`, a new card goes to the first column. When editing in your editor, the first line is the title and everything after the blank line is the description.
+Without `--column`, a new card goes to the first column (Backlog on a default board). When editing in your editor, the first line is the title and everything after the blank line is the description.
 
 ### Eras
 

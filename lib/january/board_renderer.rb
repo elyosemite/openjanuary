@@ -11,7 +11,7 @@ module January
     end
 
     def render
-      return "No columns yet. Run 'january column add NAME'." if @columns.empty?
+      return "No columns yet. Run 'january board column add NAME'." if @columns.empty?
 
       side_by_side? ? render_side_by_side : render_stacked
     end

@@ -54,7 +54,7 @@ module January
 
     def add_card(title, column: nil, description: "")
       target = column ? fetch_column(column) : @columns.first
-      raise Error, "Add a column first with 'january column add NAME'." unless target
+      raise Error, "Add a column first with 'january board column add NAME'." unless target
 
       card = Card.new(
         id: @next_card_id, title: title, description: description, column: target, era_id: current_era&.id

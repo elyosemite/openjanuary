@@ -8,7 +8,7 @@ module January
         true
       end
 
-      desc "add TITLE", "Add a card to the active project"
+      desc "add TITLE", "Add a card to the active board"
       option :column, aliases: "-c", desc: "Target column (defaults to the first one)"
       option :description, aliases: "-d", default: "", desc: "Card description"
       def add(title)
@@ -18,12 +18,12 @@ module January
         puts "Added card ##{card.id} to '#{card.column}'."
       end
 
-      desc "list", "List the cards of the active project"
+      desc "list", "List the cards of the active board"
       option :column, aliases: "-c", desc: "Only cards in this column"
       def list
         project = workspace.active_board
         cards = options[:column] ? project.cards_in(project_column(project, options[:column])) : project.cards
-        return puts("No cards yet. Run 'january card add TITLE'.") if cards.empty?
+        return puts("No cards yet. Run 'january board card add TITLE'.") if cards.empty?
 
         cards.each { |card| puts "##{card.id}  [#{card.column}]  #{card.title}" }
       end

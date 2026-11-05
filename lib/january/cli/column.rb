@@ -7,21 +7,21 @@ module January
         true
       end
 
-      desc "add NAME", "Add a column to the active project"
+      desc "add NAME", "Add a column to the active board"
       def add(name)
         column = update { |project| project.add_column(name) }
         puts "Added column '#{column}'."
       end
 
-      desc "list", "List the columns of the active project"
+      desc "list", "List the columns of the active board"
       def list
         columns = workspace.active_board.columns
-        return puts("No columns yet. Run 'january column add NAME'.") if columns.empty?
+        return puts("No columns yet. Run 'january board column add NAME'.") if columns.empty?
 
         columns.each_with_index { |column, index| puts "#{index + 1}. #{column}" }
       end
 
-      desc "remove NAME", "Remove a column from the active project"
+      desc "remove NAME", "Remove a column from the active board"
       option :move_to, desc: "Move its cards to this column before removing"
       option :force, type: :boolean, desc: "Delete its cards along with the column"
       def remove(name)

@@ -64,12 +64,12 @@ A full first session looks like this:
 ```sh
 january project add work
 january board add studies    # optional: a second board
-january column add Backlog
-january column add Doing
-january column add Done
+january board column add Backlog
+january board column add Doing
+january board column add Done
 january era start November --ends 2026-11-30
-january card add "Write the proposal" -d "Draft and send to the team"
-january card move 1 Doing
+january board card add "Write the proposal" -d "Draft and send to the team"
+january board card move 1 Doing
 january board
 ```
 
@@ -98,12 +98,12 @@ Project names are lowercase and may contain letters, digits, `-` and `_`.
 
 ### Columns
 
-Columns belong to the active project.
+Columns belong to a board, so these commands act on the active board.
 
 ```sh
-january column add NAME            # add a column at the end
-january column list               # list columns in order
-january column remove NAME         # remove a column
+january board column add NAME            # add a column at the end
+january board column list               # list columns in order
+january board column remove NAME         # remove a column
 ```
 
 Column names are case insensitive for matching, and keep the case you typed.
@@ -112,17 +112,17 @@ Removing a column that still has cards is blocked. Pass `--move-to COLUMN` to re
 
 ### Cards
 
-Cards belong to the active project and always sit in a column. Ids are sequential per project and are never reused.
+Cards belong to a board and always sit in one of its columns, so these commands act on the active board. Ids are sequential per project and are never reused.
 
 ```sh
-january card add "Pay the university fee" --column Backlog \
+january board card add "Pay the university fee" --column Backlog \
   --description "Due on the 10th, bank transfer"
-january card list [--column NAME]
-january card show 7
-january card move 7 Doing
-january card edit 7                      # opens $EDITOR
-january card edit 7 --title "New title"  # or edit with flags
-january card remove 7
+january board card list [--column NAME]
+january board card show 7
+january board card move 7 Doing
+january board card edit 7                      # opens $EDITOR
+january board card edit 7 --title "New title"  # or edit with flags
+january board card remove 7
 ```
 
 Without `--column`, a new card goes to the first column. When editing in your editor, the first line is the title and everything after the blank line is the description.

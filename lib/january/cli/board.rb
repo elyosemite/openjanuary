@@ -6,6 +6,12 @@ module January
     class BoardCommands < Thor
       default_task :show
 
+      desc "column SUBCOMMAND", "Manage columns of the active board"
+      subcommand "column", ColumnCommands
+
+      desc "card SUBCOMMAND", "Manage cards of the active board"
+      subcommand "card", CardCommands
+
       def self.exit_on_failure?
         true
       end

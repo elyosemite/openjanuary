@@ -9,16 +9,10 @@ module January
     desc "project SUBCOMMAND", "Manage projects"
     subcommand "project", ProjectCommands
 
-    desc "column SUBCOMMAND", "Manage columns of the active project"
-    subcommand "column", ColumnCommands
-
-    desc "card SUBCOMMAND", "Manage cards of the active project"
-    subcommand "card", CardCommands
-
     desc "era SUBCOMMAND", "Manage eras of the active project"
     subcommand "era", EraCommands
 
-    desc "board SUBCOMMAND", "Show the board and rearrange its columns"
+    desc "board SUBCOMMAND", "Manage boards, their columns and their cards"
     subcommand "board", BoardCommands
 
     map %w[-v --version] => :version

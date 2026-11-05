@@ -100,7 +100,6 @@ Columns belong to the active project.
 ```sh
 january column add NAME            # add a column at the end
 january column list               # list columns in order
-january column move NAME --to N   # move to position N (starting at 1)
 january column remove NAME         # remove a column
 ```
 
@@ -142,6 +141,7 @@ The last column counts as done. When you close an era with unfinished cards, you
 ```sh
 january board           # active project, current era
 january board --all     # every card, regardless of era
+january board move NAME --to N   # move a column to position N (starting at 1)
 ```
 
 With no active era, the board shows every card. Columns are laid out side by side and stacked on narrow terminals. Titles that do not fit are truncated.

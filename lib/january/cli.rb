@@ -18,6 +18,9 @@ module January
     desc "era SUBCOMMAND", "Manage eras of the active project"
     subcommand "era", EraCommands
 
+    desc "board SUBCOMMAND", "Show the board and rearrange its columns"
+    subcommand "board", BoardCommands
+
     map %w[-v --version] => :version
 
     desc "version", "Print the OpenJanuary version"

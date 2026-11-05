@@ -31,13 +31,6 @@ module January
         puts "Removed column '#{column}'."
       end
 
-      desc "move NAME --to POSITION", "Move a column to a 1-based position"
-      option :to, type: :numeric, required: true, desc: "Target position, starting at 1"
-      def move(name)
-        column = update { |project| project.move_column(name, options[:to].to_i) }
-        puts "Moved column '#{column}' to position #{options[:to].to_i}."
-      end
-
       private
 
       def update(&block)

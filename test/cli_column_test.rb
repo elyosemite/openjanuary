@@ -20,21 +20,6 @@ class CliColumnTest < Minitest::Test
     assert_match(/No columns yet/, january("column", "list"))
   end
 
-  def test_move
-    %w[Backlog Doing Done].each { |c| january("column", "add", c) }
-    assert_match(/Moved column 'Done' to position 1/, january("column", "move", "Done", "--to", "1"))
-    assert_equal "1. Done\n2. Backlog\n3. Doing\n", january("column", "list")
-  end
-
-  def test_move_requires_position
-    assert_match(/--to/, january("column", "move", "Done"))
-  end
-
-  def test_move_out_of_range
-    january("column", "add", "A")
-    assert_match(/Position must be between 1 and 1/, january("column", "move", "A", "--to", "5"))
-  end
-
   def test_remove
     january("column", "add", "Backlog")
     assert_match(/Removed column 'Backlog'/, january("column", "remove", "backlog"))
